@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [],
+  "framework": "sveltekit",
+  "buildCommand": "npm run build",
+  "outputDirectory": null
+}

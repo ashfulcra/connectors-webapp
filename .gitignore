@@ -1,0 +1,11 @@
+.private/
+.env
+.env.*
+!.env.example
+node_modules/
+.svelte-kit/
+.vercel/
+build/
+coverage/
+*.log
+/.swc

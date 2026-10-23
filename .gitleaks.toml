@@ -1,0 +1,7 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Official Fulcra public Auth0 client ID; not a client secret"
+regexTarget = "secret"
+regexes = ['''^whF3ymxsYHijh2QrGkGbgDkxqDDAA8KB$''']

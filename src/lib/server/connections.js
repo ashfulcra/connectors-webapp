@@ -1,0 +1,125 @@
+import { canonical, contentHash } from './sync/identity.js';
+import { prepareOutput } from './sync/runner.js';
+import { unseal } from './secrets.js';
+/** Only this allowlist is persisted as non-secret configuration.
+ * @param {any} input @param {string[]} discovered @param {string} ownerId */
+export function validateConfig(input, discovered, ownerId) {
+  if (
+    !input ||
+    Object.keys(input).some(
+      (k) => !['resources', 'backfillSince', 'intervalSeconds', 'route', 'routeVersion'].includes(k)
+    )
+  )
+    throw new Error('Invalid configuration fields');
+  if (
+    !Array.isArray(input.resources) ||
+    input.resources.length < 1 ||
+    input.resources.length > 20 ||
+    input.resources.some(
+      (/** @type {any} */ id) => typeof id !== 'string' || !discovered.includes(id)
+    )
+  )
+    throw new Error('Select discovered sources');
+  if (
+    !Number.isInteger(input.intervalSeconds) ||
+    input.intervalSeconds < 60 ||
+    input.intervalSeconds > 86400
+  )
+    throw new Error('Polling interval must be60–86400 seconds');
+  const since = Date.parse(input.backfillSince);
+  if (!Number.isFinite(since) || since > Date.now() || since < Date.now() - 366 * 86400000)
+    throw new Error('Choose a backfill date within the last year');
+  if (
+    !input.route ||
+    Object.keys(input.route).some((k) => !['mode', 'folder', 'recordType', 'ownerId'].includes(k))
+  )
+    throw new Error('Invalid destination configuration');
+  return {
+    resources: [...new Set(input.resources)],
+    backfillSince: new Date(since).toISOString(),
+    intervalSeconds: input.intervalSeconds,
+    routeVersion: input.routeVersion ?? 1,
+    route: {
+      mode: input.route.mode,
+      folder: input.route.folder,
+      recordType: input.route.recordType,
+      ownerId
+    }
+  };
+}
+/** @param {any} connection @param {any} adapter @param {any} credential @param {string} ownerId */
+export async function previewConnection(connection, adapter, credential, ownerId) {
+  const deadline = Date.now() + 25000;
+  let checkpoint = null;
+  for (let n = 0; n < 4 && Date.now() + 1000 < deadline; n++) {
+    /** @type {any} */
+    const page = await adapter.readPage({
+      connection,
+      credential,
+      checkpoint,
+      deadline,
+      hints: []
+    });
+    if (page.retryAt)
+      return { outputs: [], writesPerformed: false, retryAt: page.retryAt, complete: false };
+    if (page.resetRequired) throw new Error('Preview requires reconciliation');
+    if (page.changes.length || !page.continuation)
+      return {
+        outputs: page.changes
+          .slice(0, 3)
+          .map((/** @type {any} */ c) => prepareOutput(connection, c, ownerId)),
+        writesPerformed: false,
+        hasMore: !!page.continuation || page.changes.length > 3,
+        complete: true
+      };
+    checkpoint = page.candidateCheckpoint;
+  }
+  return {
+    outputs: [],
+    writesPerformed: false,
+    complete: false,
+    detail:
+      'This source needs more traversal than a bounded preview; select a smaller root or window.'
+  };
+}
+/** @param {any} config */
+export const configHash = (config) => contentHash(canonical(config));
+/** @param {any} store @param {string} id @param {boolean} confirmed @param {any} crypto */
+export async function enableConnection(store, id, confirmed, crypto) {
+  if (!confirmed) throw new Error('Confirm the preview before enabling');
+  const background = await store.getGrant('fulcra');
+  if (background?.status !== 'ready') throw new Error('Background authorization required');
+  const provider = await store.getGrant('provider:' + id);
+  if (provider?.status !== 'ready') throw new Error('Provider authorization required');
+  const connection = await store.getConnection(id),
+    key = 'preview:' + id,
+    preview = await store.getGrant(key);
+  if (!connection || !preview || Date.parse(preview.expiresAt) <= Date.now())
+    throw new Error('A recent preview is required');
+  const proof = unseal(preview.encrypted, `${store.deploymentId}:${store.ownerId}:${key}`, crypto);
+  if (
+    proof.hash !== configHash(connection.config) ||
+    String(proof.generation) !== String(connection.generation)
+  )
+    throw new Error('Configuration changed; preview again');
+  await store.changeGeneration(id, 'ready', null, connection.generation);
+  await store.enqueue(id);
+  return { status: 'ready' };
+}
+
+/** Distinguish routing identity, source progress and scheduling-only changes.
+ * @param {any} old @param {any} input @param {string[]} discovered @param {string} ownerId */
+export function configurationUpdate(old, input, discovered, ownerId) {
+  const config = validateConfig(input, discovered, ownerId);
+  const normalizedOld = {
+    ...old,
+    backfillSince: old.backfillSince ? new Date(old.backfillSince).toISOString() : undefined
+  };
+  const routingChanged = canonical(old.route) !== canonical(config.route);
+  config.routeVersion = old.routeVersion ? old.routeVersion + (routingChanged ? 1 : 0) : 1;
+  const resetCheckpoint =
+    routingChanged ||
+    canonical(old.resources) !== canonical(config.resources) ||
+    normalizedOld.backfillSince !== config.backfillSince;
+  return { config, resetCheckpoint, changed: canonical(normalizedOld) !== canonical(config) };
+}

@@ -1,0 +1,76 @@
+import { it, expect, vi } from 'vitest';
+import { validateConfig, previewConnection, enableConnection } from './connections.js';
+const config = {
+  resources: ['selected'],
+  backfillSince: '2026-10-01T00:00:00Z',
+  intervalSeconds: 300,
+  route: { mode: 'file', folder: '/connectors/test' }
+};
+it('requires discovered sources and rejects invalid intervals or secret-bearing config', () => {
+  expect(() => validateConfig({ ...config, intervalSeconds: 1 }, ['selected'], 'owner')).toThrow(
+    /interval/i
+  );
+  expect(() =>
+    validateConfig({ ...config, resources: ['unmatched'] }, ['selected'], 'owner')
+  ).toThrow(/source/i);
+  expect(() => validateConfig({ ...config, token: 'private' }, ['selected'], 'owner')).toThrow(
+    /configuration/i
+  );
+  expect(validateConfig(config, ['selected'], 'owner').route.ownerId).toBe('owner');
+});
+it('preview reads a bounded source page without sink writes, jobs, or checkpoint commits', async () => {
+  const adapter = {
+    readPage: vi.fn().mockResolvedValue({
+      changes: [
+        {
+          id: 'one',
+          version: 'v1',
+          timestamp: '2026-10-01T00:00:00Z',
+          payload: { title: 'Preview' }
+        }
+      ]
+    })
+  };
+  const result = await previewConnection(
+    { id: 'connection', connector: 'test', account_id: 'account', config },
+    adapter,
+    {},
+    'owner'
+  );
+  expect(result.outputs[0].record.payload.title).toBe('Preview');
+  expect(result.writesPerformed).toBe(false);
+  expect(adapter.readPage).toHaveBeenCalledWith(expect.objectContaining({ checkpoint: null }));
+});
+it('enable requires explicit preview confirmation and a separately enrolled background grant', async () => {
+  const store = {
+    getGrant: vi.fn().mockResolvedValue(null),
+    changeGeneration: vi.fn(),
+    enqueue: vi.fn()
+  };
+  await expect(enableConnection(store, 'id', false, {})).rejects.toThrow(/preview/i);
+  await expect(enableConnection(store, 'id', true, {})).rejects.toThrow(/authorization/i);
+  expect(store.enqueue).not.toHaveBeenCalled();
+});
+it('unchanged and interval-only edits preserve progress and revision identity', async () => {
+  const { configurationUpdate } = await import('./connections.js');
+  const old = { ...config, routeVersion: 4, route: { ...config.route, ownerId: 'owner' } };
+  const unchanged = configurationUpdate(old, { ...old }, ['selected'], 'owner');
+  expect(unchanged.changed).toBe(false);
+  expect(unchanged.resetCheckpoint).toBe(false);
+  const interval = configurationUpdate(
+    old,
+    { ...old, intervalSeconds: 600 },
+    ['selected'],
+    'owner'
+  );
+  expect(interval.config.routeVersion).toBe(4);
+  expect(interval.resetCheckpoint).toBe(false);
+  const moved = configurationUpdate(
+    old,
+    { ...old, route: { ...old.route, folder: '/new' } },
+    ['selected'],
+    'owner'
+  );
+  expect(moved.config.routeVersion).toBe(5);
+  expect(moved.resetCheckpoint).toBe(true);
+});

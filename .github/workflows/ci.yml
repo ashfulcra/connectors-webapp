@@ -1,0 +1,53 @@
+name: Checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-and-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install and configure public test defaults
+        run: |
+          cp .env.example .env
+          npm ci
+      - name: Audit dependencies and public source
+        run: |
+          npm audit --audit-level=low
+          node scripts/check-release.mjs
+      - name: Scan complete Git history
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/gitleaks.tar.gz" https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz
+          echo "551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb  $RUNNER_TEMP/gitleaks.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP" gitleaks
+          "$RUNNER_TEMP/gitleaks" git . --log-opts=--all --redact
+      - name: Tests, type checks and build
+        run: |
+          npm test
+          npm run test:bootstrap
+          npm run check
+          npm run build
+      - name: Owner and public route checks
+        run: |
+          node scripts/check-personal.mjs
+          node scripts/check-public.mjs
+      - name: Browser walkthroughs
+        run: |
+          npm install --prefix "$RUNNER_TEMP/browser-checks" --no-package-lock playwright@1.64.1
+          "$RUNNER_TEMP/browser-checks/node_modules/.bin/playwright" install --with-deps chromium
+          export PLAYWRIGHT_MODULE="file://$RUNNER_TEMP/browser-checks/node_modules/playwright/index.mjs"
+          node scripts/check-walkthrough.mjs
+          node scripts/check-background-auth.mjs
