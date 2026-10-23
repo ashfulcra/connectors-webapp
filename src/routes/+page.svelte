@@ -286,8 +286,11 @@ node scripts/deploy.mjs</code
       </div>
     </section>
     <section class="closing">
-      <p class="eyebrow">Your data has a home</p>
-      <h2>Fulcra is the database.</h2>
+      <h2>Your data should be yours.</h2>
+      <p>
+        Fulcra is the home for all of your data, under your control, accessible to the agents and
+        collaborators you choose.
+      </p>
       <p>
         Structured imports go into v1 data types. Documents go into folders. Your connector app
         brings them together, under your account, on a schedule you control.
