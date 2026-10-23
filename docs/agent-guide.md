@@ -9,10 +9,10 @@ These are project instructions for a coding agent working at its user's request.
 
 ## Get the source and run the real examples
 
-Repository: https://github.com/ashfulcra/connectors-webapp. Fork it and branch from `main`; inspect an existing checkout before changing it. Keep unrelated work intact.
+Repository: https://github.com/fulcradynamics/connectors-webapp. Fork it and branch from `main`; inspect an existing checkout before changing it. Keep unrelated work intact.
 
 ```sh
-git clone https://github.com/ashfulcra/connectors-webapp.git
+git clone https://github.com/fulcradynamics/connectors-webapp.git
 cd connectors-webapp
 npm ci
 cp .env.example .env # first setup only

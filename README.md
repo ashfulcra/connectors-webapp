@@ -4,6 +4,8 @@ Connect third-party tools and services directly to your Fulcra data store. Work 
 
 Services you enable here feed your store automatically. You choose the sources, destination, history window and sync frequency. Each copy runs in its owner's Fulcra namespace with its own authentication, credentials and state.
 
+Source: [fulcradynamics/connectors-webapp](https://github.com/fulcradynamics/connectors-webapp). Anyone can fork and submit a PR; Fulcra organization members maintain and merge reviewed changes.
+
 Start with the [reference app](https://connectors.my.fulcra.ai), or fork this repo and deploy at `your-name.my.fulcra.ai`.
 
 ## What it connects

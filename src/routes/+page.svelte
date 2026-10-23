@@ -1,5 +1,5 @@
 <script>
-  const repo = 'https://github.com/ashfulcra/connectors-webapp';
+  const repo = 'https://github.com/fulcradynamics/connectors-webapp';
   const examples = [
     {
       name: 'Granola',
@@ -152,15 +152,15 @@
           <span class="step-number">01</span>
           <h3>Fork or clone</h3>
           <p>
-            Fork <a href={repo}>ashfulcra/connectors-webapp</a> to keep your changes and contribute them
-            back. Or clone it for a local checkout.
+            Fork <a href={repo}>fulcradynamics/connectors-webapp</a> to keep your changes and contribute
+            them back. Or clone it for a local checkout.
           </p>
           <p class="notice">
             The source is public and MIT licensed. Fork it, then work from <code>main</code>.
           </p>
           <pre aria-label="Clone and run the preview"><code
               >git clone --branch main \
-  https://github.com/ashfulcra/connectors-webapp.git
+  https://github.com/fulcradynamics/connectors-webapp.git
 cd connectors-webapp
 npm ci
 npm run dev</code
@@ -277,8 +277,8 @@ node scripts/deploy.mjs</code
               Open a pull request to the main project’s <code>main</code> branch for review.
             </li>
             <li>
-              Include setup instructions, test evidence and known limits. Maintainers review
-              connectors before they join the template.
+              Include setup instructions, test evidence and known limits. Fulcra organization
+              members review and merge connectors before they join the template.
             </li>
           </ol>
           <a class="text-link" href="/guides/contributing.md">Read the contribution guide ↗</a>

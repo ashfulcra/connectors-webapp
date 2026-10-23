@@ -43,7 +43,7 @@
       pattern: 'Short-lived tokens, calendar dates and historical reconciliation'
     }
   ];
-  const repo = 'https://github.com/ashfulcra/connectors-webapp/blob/main';
+  const repo = 'https://github.com/fulcradynamics/connectors-webapp/blob/main';
 </script>
 
 <svelte:head
@@ -74,8 +74,8 @@
         workspace says “Setup required,” follow the <a href="/guides/setup.md"
           >current setup guide</a
         >. Use the copyable commands in that guide to create or reuse your namespace, initialize
-        fresh private state, and deploy at your own subdomain. Repository access is currently
-        required to clone the source.
+        fresh private state, and deploy at your own subdomain. The repository is public; anyone can
+        fork it and propose a connector.
       </p>
     </aside>
     <section aria-labelledby="use">
@@ -119,8 +119,8 @@
     <section aria-labelledby="examples">
       <h2 id="examples">The five implemented connectors</h2>
       <p>
-        Each setup guide explains exact supported data and limits. Code and test links require
-        current repository access.
+        Each setup guide explains exact supported data and limits. Code and test links require the
+        public repository.
       </p>
       <div class="provider-grid">
         {#each providers as provider}<article>
