@@ -134,12 +134,20 @@ try {
       body = {
         complete: true,
         writesPerformed: false,
-        outputs: [
-          {
-            record: { payload: { title: 'Synthetic marketing meeting' } },
-            files: [{ path: 'sample/meeting.md' }]
-          }
-        ]
+        hasMore: connections[0]?.connector === 'garmin',
+        detail:
+          connections[0]?.connector === 'garmin'
+            ? 'Checked 4 bounded source pages without finding items. This sample does not cover every selected dataset or history date. Enabling will continue through the remaining history and watch for new data.'
+            : undefined,
+        outputs:
+          connections[0]?.connector === 'garmin'
+            ? []
+            : [
+                {
+                  record: { payload: { title: 'Synthetic marketing meeting' } },
+                  files: [{ path: 'sample/meeting.md' }]
+                }
+              ]
       };
     else if (path === `/api/connections/${connectionId}/action`) {
       const input = req.postDataJSON();
@@ -359,6 +367,7 @@ try {
   await page.getByRole('button', { name: 'Save and preview output' }).click();
   await page.getByRole('heading', { name: '6. Review and enable' }).waitFor();
   assert.equal(enabled, false);
+  await page.getByText(/This sample does not cover every selected dataset/).waitFor();
   assert.deepEqual(saved.resources, ['daily', 'sleep']);
   assert.equal(saved.intervalSeconds, 1800);
   assert.equal(saved.route.folder, '/connectors/garmin');

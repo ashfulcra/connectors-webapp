@@ -428,6 +428,7 @@
               ? 'This is a bounded sample.'
               : (preview.detail ?? 'Provider retry required; go back and preview again.')}
           </p>
+          {#if preview.complete && preview.detail}<p>{preview.detail}</p>{/if}
           {#if preview.complete && !preview.outputs?.length}<p>
               No matching items were returned for this sample. Enabling will watch the selected
               sources for future changes.

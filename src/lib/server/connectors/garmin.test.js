@@ -1,6 +1,7 @@
 import { it, expect, vi } from 'vitest';
 import { createGarmin } from './garmin.js';
 import { revisionId } from '../sync/identity.js';
+import { previewConnection } from '../connections.js';
 const now = () => Date.parse('2026-11-02T15:00:00Z');
 const credential = { token: 'synthetic-access', accountId: '42', timeZone: 'America/New_York' };
 const connection = (resources = ['daily']) => ({
@@ -27,6 +28,41 @@ const input = (c = connection(), checkpoint = null) => ({
   credential,
   checkpoint,
   deadline: Date.now() + 30000
+});
+it('keeps a date-picker boundary as the selected local date west of UTC', async () => {
+  const { adapter } = fixture((url) =>
+    response({ userProfileId: 42, calendarDate: url.searchParams.get('calendarDate') })
+  );
+  const c = connection();
+  c.config.backfillSince = '2026-11-01T00:00:00Z';
+  const page = await adapter.readPage(input(c));
+  expect(page.candidateCheckpoint.cycle.from).toBe('2026-11-01');
+  const next = await adapter.readPage(input(c, page.candidateCheckpoint));
+  expect(next.continuation).toBe(false);
+});
+it('allows an honestly labeled empty bounded preview for sparse activity history', async () => {
+  const { adapter } = fixture(() => response([]));
+  const c = {
+    ...connection(['activities']),
+    config: {
+      ...connection(['activities']).config,
+      backfillSince: '2026-10-26T00:00:00Z',
+      route: { mode: 'file', folder: '/connectors/garmin' }
+    }
+  };
+  const preview = await previewConnection(c, adapter, credential, 'owner');
+  expect(preview).toMatchObject({
+    complete: true,
+    writesPerformed: false,
+    outputs: [],
+    hasMore: true
+  });
+  expect(preview.detail).toContain('does not cover every selected dataset');
+  expect(
+    (await previewConnection(c, { readPage: adapter.readPage }, credential, 'owner')).complete
+  ).toBe(false);
+  const throttled = fixture(() => response({}, 429, { 'retry-after': '60' }));
+  expect((await previewConnection(c, throttled.adapter, credential, 'owner')).complete).toBe(false);
 });
 it('verifies immutable account identity and provider time zone, never a supplied display name or ID', async () => {
   const { adapter } = fixture((url) =>
@@ -141,7 +177,7 @@ it('imports sleep, heart-rate arrays and HRV with stable date identities, skippi
       'heart_rate',
       {
         userProfilePK: 42,
-        calendarDate: '2026-11-02',
+        calendarDate: { date: '2026-11-02T05:00:00Z', localDate: '2026-11-02' },
         heartRateValues: [
           [1793610000000, 60],
           [1793610060000, null]

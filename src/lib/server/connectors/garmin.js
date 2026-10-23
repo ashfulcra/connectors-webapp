@@ -111,7 +111,12 @@ export function createGarmin({ fetchImpl = fetch, now = () => Date.now() } = {})
       if (!Number.isFinite(configured) || configured > now())
         throw Error('Invalid Garmin backfill configuration');
       // Keep ongoing reconciliation bounded to one year as the stored initial date ages.
-      const earliest = [localDate(configured, zone), addDays(today, -365)].sort().at(-1);
+      // The shared date picker stores YYYY-MM-DD at UTC midnight. That prefix is
+      // a user-selected calendar date, not an instant to shift into another day.
+      const selectedDate = new Date(configured).toISOString().slice(0, 10);
+      const oldest = addDays(today, -365);
+      const earliest = selectedDate > oldest ? selectedDate : oldest;
+      if (earliest > today) return { changes: [], candidateCheckpoint: cp, continuation: false };
       if (!cp.cycle) {
         const full = !cp.lastFullAt || now() - Date.parse(cp.lastFullAt) >= DAY;
         const from = full ? earliest : [earliest, addDays(today, -6)].sort().at(-1);
@@ -180,8 +185,12 @@ export function createGarmin({ fetchImpl = fetch, now = () => Date.now() } = {})
         const result = await req(paths[/** @type {keyof typeof paths} */ (source)], {}, [204]);
         if (result.status !== 204 && result.data && Object.keys(result.data).length) {
           data = result.data;
-          if ((data.calendarDate ?? data.hrvSummary?.calendarDate) !== date)
-            throw Error('Invalid Garmin source date');
+          // DailyHeartRateDTO uses ConnectDate, unlike the other daily schemas.
+          const sourceDate =
+            source === 'heart_rate' && typeof data.calendarDate === 'object'
+              ? data.calendarDate?.localDate
+              : (data.calendarDate ?? data.hrvSummary?.calendarDate);
+          if (sourceDate !== date) throw Error('Invalid Garmin source date');
           id = date;
           timestamp = dateStart(date, zone);
         }
@@ -218,6 +227,6 @@ export function createGarmin({ fetchImpl = fetch, now = () => Date.now() } = {})
       return { changes, candidateCheckpoint: cp, continuation };
     });
   }
-  return { validate, listResources, readPage };
+  return { validate, listResources, readPage, previewPolicy: 'bounded-sample' };
 }
 export const garmin = createGarmin();
