@@ -4,17 +4,20 @@ Connect third-party tools and services directly to your Fulcra data store. Work 
 
 Services you enable here feed your store automatically. You choose the sources, destination, history window and sync frequency. Each copy runs in its owner's Fulcra namespace with its own authentication, credentials and state.
 
+Source: [fulcradynamics/connectors-webapp](https://github.com/fulcradynamics/connectors-webapp). Anyone can fork and submit a PR; Fulcra organization members maintain and merge reviewed changes.
+
 Start with the [reference app](https://connectors.my.fulcra.ai), or fork this repo and deploy at `your-name.my.fulcra.ai`.
 
 ## What it connects
 
-| Connector | Imported data                          | Example pattern                                  |
-| --------- | -------------------------------------- | ------------------------------------------------ |
-| Granola   | Selected meeting notes and transcripts | API keys, delayed content, transcript pagination |
-| Asana     | Selected projects' tasks and changes   | Event cursors and periodic reconciliation        |
-| GitHub    | Issues, PR metadata and issue comments | Repository selection, pagination, token/App auth |
-| Notion    | Selected pages and nested blocks       | Resumable document traversal                     |
-| Slack     | Selected messages and threads          | History cursors, rate limits, signed event hints |
+| Connector | Imported data                             | Example pattern                                      |
+| --------- | ----------------------------------------- | ---------------------------------------------------- |
+| Garmin    | Selected activities and daily health JSON | Personal key renewal, local dates and reconciliation |
+| Granola   | Selected meeting notes and transcripts    | API keys, delayed content, transcript pagination     |
+| Asana     | Selected projects' tasks and changes      | Event cursors and periodic reconciliation            |
+| GitHub    | Issues, PR metadata and issue comments    | Repository selection, pagination, token/App auth     |
+| Notion    | Selected pages and nested blocks          | Resumable document traversal                         |
+| Slack     | Selected messages and threads             | History cursors, rate limits, signed event hints     |
 
 These are working example adapters with synthetic tests, not promises to mirror every feature of each service. Read each [provider guide](docs/user-guide.md#connect-a-service) for supported data, permissions and limits. Google connectors are outside the current examples.
 
@@ -59,6 +62,6 @@ npm run check
 npm run build
 ```
 
-`npm run test:examples` runs only the five adapters. Tests use synthetic data; they do not require provider credentials. Browser checks and the optional PostgreSQL test path are documented in [contributing](CONTRIBUTING.md).
+`npm run test:examples` runs only the six adapters. Tests use synthetic data; they do not require provider credentials. Browser checks and the optional PostgreSQL test path are documented in [contributing](CONTRIBUTING.md).
 
 MIT licensed. Based on the [Fulcra Svelte app starter](https://github.com/fulcradynamics/app-template-svelte) and [Fulcra app-building skill](https://github.com/fulcradynamics/agent-skills).

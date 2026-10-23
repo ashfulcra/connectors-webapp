@@ -36,7 +36,7 @@ if (setup.setupDefaults) {
     );
   });
   it('provides official credential steps and truthful provider-specific source/backfill/output guidance', () => {
-    for (const id of ['granola', 'asana', 'github', 'notion', 'slack']) {
+    for (const id of ['granola', 'asana', 'github', 'notion', 'slack', 'garmin']) {
       const info = setup.getConnectorSetup(id);
       expect(info.setupUrl).toMatch(/^https:\/\//);
       expect(info.credentialSteps.length).toBeGreaterThan(1);
@@ -58,3 +58,14 @@ if (setup.setupDefaults) {
     expect(() => setup.setupDefaults('unknown')).toThrow(/unsupported/i);
   });
 }
+
+it('links Garmin key creation directly and discloses renewal, dataset, type and cadence semantics', () => {
+  const info = setup.getConnectorSetup('garmin');
+  expect(info.credentialUrl).toBe('https://connect.garmin.com/app/settings/personalApiToken');
+  expect(info.credentialSteps.join(' ')).toContain('once-displayed');
+  expect(info.credentialSteps.join(' ')).toContain('expiration');
+  expect(info.output).toContain('v1 Event');
+  expect(info.backfillHelp).toContain('7 calendar days');
+  expect(info.limitations).toContain('expired/revoked');
+  expect(setup.setupDefaults('garmin').folder).toBe('/connectors/garmin');
+});

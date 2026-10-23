@@ -1,6 +1,29 @@
 /** @typedef {{name:string,credentialUrl:string|null,credentialLink:string,credentialNote?:string,additionalCredentialLinks?:Array<{url:string,label:string}>,setupUrl:string,setupLink:string,credentialSteps:string[],scopes:string,sourceLabel:string,sourceHelp:string,output:string,backfillHelp:string,limitations:string,accountHint?:string}} ConnectorSetup */
 /** @type {Record<string,ConnectorSetup>} */
 const providers = {
+  garmin: {
+    name: 'Garmin',
+    credentialUrl: 'https://connect.garmin.com/app/settings/personalApiToken',
+    credentialLink: 'Create or manage Garmin Personal API key',
+    setupUrl: 'https://developer.garmin.com/gc-developer-program/personal/personal-api/',
+    setupLink: 'Garmin Personal API setup instructions',
+    credentialSteps: [
+      'Open Garmin Connect Personal API keys below while signed into your own Garmin account. Select Create Key, read and accept the terms, choose an expiration, then Create.',
+      'Copy the once-displayed key and paste it here. Choose Done in Garmin. This app exchanges it for a short-lived access token and renews that token automatically. It never needs your Garmin password.',
+      'Keys expire after 30, 90 or 180 days, or one year. Check the expiry on the same Garmin page. Replace the key here when it expires or you revoke it; replacement pauses collection until you preview and enable again.'
+    ],
+    scopes:
+      'Personal API access to your own Garmin account only. The key grants account-level read access; select the datasets this app should import next. Verification reads account settings and today’s daily summary to bind your account identity.',
+    sourceLabel: 'datasets',
+    sourceHelp:
+      'Choose Activities, Daily summaries, Sleep, Heart rate and/or HRV. These are categories within one Garmin account. Availability depends on your devices and uploaded data.',
+    output:
+      'Garmin JSON: activity summaries, daily wellness summaries, sleep, daily heart-rate readings and HRV. Choose JSON files, connector-compatible v1 Event records, or both. Raw provider values/units, calendar date and time zone are retained in payload; this does not map into existing Fulcra health metric types.',
+    backfillHelp:
+      'The starting date is interpreted in the verified Garmin account time zone. Import recent days first, then older days. Each cycle rechecks the latest 7 calendar days; a daily reconciliation checks the selected history, bounded to the latest year. A cycle can require many requests, so the interval is not a freshness guarantee.',
+    limitations:
+      'Personal, pull-only use. No FIT/ZIP exports, GPS tracks, workouts or women’s health data in this version. Activities include parent summaries, not separate multisport legs. Empty days do not delete old imports. Garmin must receive device uploads first. No numeric API quota is published in the inspected docs; throttling delays collection. The token renews within 24 hours, but an expired/revoked key needs replacement.'
+  },
   granola: {
     name: 'Granola',
     credentialUrl: null,

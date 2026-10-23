@@ -34,15 +34,22 @@
       prepare: 'Channel read token; suitable user token for threads; optional signing secret',
       select: 'Channels → messages and threads',
       pattern: 'Timestamp identity, rate limits and event-assisted updates'
+    },
+    {
+      id: 'garmin',
+      name: 'Garmin',
+      prepare: 'A Garmin Personal API key for your own account',
+      select: 'Datasets → activities, daily summaries, sleep, heart rate and HRV',
+      pattern: 'Short-lived tokens, calendar dates and historical reconciliation'
     }
   ];
-  const repo = 'https://github.com/ashfulcra/connectors-webapp/blob/feat/connector-template';
+  const repo = 'https://github.com/fulcradynamics/connectors-webapp/blob/main';
 </script>
 
 <svelte:head
   ><title>User and agent guides — Fulcra Connectors</title><meta
     name="description"
-    content="Use the five implemented connector examples, hand an agent the build instructions, and contribute another connector for review."
+    content="Use the six implemented connector examples, hand an agent the build instructions, and contribute another connector for review."
   /></svelte:head
 >
 <div class="guide-page">
@@ -51,8 +58,8 @@
     <p class="eyebrow">Use it. Extend it. Share it.</p>
     <h1>User guide</h1>
     <p class="lead">
-      Five implemented examples bring selected data into your Fulcra folders, v1 data types, or
-      both. Each one includes an adapter, source discovery, preview support and runnable tests.
+      Six implemented examples bring selected data into your Fulcra folders, v1 data types, or both.
+      Each one includes an adapter, source discovery, preview support and runnable tests.
     </p>
     <div class="guide-actions">
       <a href="/guides/user.md">Full user instructions ↗</a><a href="/guides/agent.md"
@@ -67,8 +74,8 @@
         workspace says “Setup required,” follow the <a href="/guides/setup.md"
           >current setup guide</a
         >. Use the copyable commands in that guide to create or reuse your namespace, initialize
-        fresh private state, and deploy at your own subdomain. Repository access is currently
-        required to clone the source.
+        fresh private state, and deploy at your own subdomain. The repository is public; anyone can
+        fork it and propose a connector.
       </p>
     </aside>
     <section aria-labelledby="use">
@@ -112,8 +119,8 @@
     <section aria-labelledby="examples">
       <h2 id="examples">The five implemented connectors</h2>
       <p>
-        Each setup guide explains exact supported data and limits. Code and test links require
-        current repository access.
+        Each setup guide explains exact supported data and limits. Code and test links require the
+        public repository.
       </p>
       <div class="provider-grid">
         {#each providers as provider}<article>

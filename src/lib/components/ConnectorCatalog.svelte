@@ -41,6 +41,14 @@
       pattern: 'Messages & threads',
       description: 'Selected channels, exact timestamps and signed hints.',
       color: '#9adccc'
+    },
+    {
+      id: 'garmin',
+      name: 'Garmin',
+      mark: '△',
+      pattern: 'Activities & health data',
+      description: 'Your Personal API key, selected datasets and daily reconciliation.',
+      color: '#b1d7ff'
     }
   ];
 </script>
@@ -48,7 +56,7 @@
 <section aria-labelledby="catalog-title">
   <div class="section-heading">
     <h2 id="catalog-title">Choose a connector</h2>
-    <span>5 example patterns</span>
+    <span>{examples.length} example patterns</span>
   </div>
   <div class="catalog">
     {#each examples as example}<button

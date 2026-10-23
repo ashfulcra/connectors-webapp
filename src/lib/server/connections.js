@@ -51,6 +51,7 @@ export function validateConfig(input, discovered, ownerId) {
 export async function previewConnection(connection, adapter, credential, ownerId) {
   const deadline = Date.now() + 25000;
   let checkpoint = null;
+  let sampledPages = 0;
   for (let n = 0; n < 4 && Date.now() + 1000 < deadline; n++) {
     /** @type {any} */
     const page = await adapter.readPage({
@@ -63,6 +64,7 @@ export async function previewConnection(connection, adapter, credential, ownerId
     if (page.retryAt)
       return { outputs: [], writesPerformed: false, retryAt: page.retryAt, complete: false };
     if (page.resetRequired) throw new Error('Preview requires reconciliation');
+    sampledPages++;
     if (page.changes.length || !page.continuation)
       return {
         outputs: page.changes
@@ -74,6 +76,17 @@ export async function previewConnection(connection, adapter, credential, ownerId
       };
     checkpoint = page.candidateCheckpoint;
   }
+  // Date-paged sources can have long stretches with no data. A successful bounded
+  // sample may be approved without pretending the whole history was traversed.
+  // Adapters that require document assembly keep the existing incomplete gate.
+  if (adapter.previewPolicy === 'bounded-sample' && sampledPages > 0)
+    return {
+      outputs: [],
+      writesPerformed: false,
+      complete: true,
+      hasMore: true,
+      detail: `Checked ${sampledPages} bounded source pages without finding items. This sample does not cover every selected dataset or history date. Enabling will continue through the remaining history and watch for new data.`
+    };
   return {
     outputs: [],
     writesPerformed: false,
