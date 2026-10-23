@@ -3,14 +3,6 @@
     $props();
   const examples = [
     {
-      id: 'garmin',
-      name: 'Garmin',
-      mark: '△',
-      pattern: 'Activities & health data',
-      description: 'Your Personal API key, selected datasets and daily reconciliation.',
-      color: '#b1d7ff'
-    },
-    {
       id: 'granola',
       name: 'Granola',
       mark: 'G',
@@ -49,6 +41,14 @@
       pattern: 'Messages & threads',
       description: 'Selected channels, exact timestamps and signed hints.',
       color: '#9adccc'
+    },
+    {
+      id: 'garmin',
+      name: 'Garmin',
+      mark: '△',
+      pattern: 'Activities & health data',
+      description: 'Your Personal API key, selected datasets and daily reconciliation.',
+      color: '#b1d7ff'
     }
   ];
 </script>

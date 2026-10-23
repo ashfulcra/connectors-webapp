@@ -2,14 +2,6 @@
   const repo = 'https://github.com/ashfulcra/connectors-webapp';
   const examples = [
     {
-      name: 'Garmin',
-      mark: 'Ga',
-      pattern: 'Activities & health → your store',
-      detail:
-        'Personal API access to selected activities, daily summaries, sleep, heart rate and HRV.',
-      file: 'garmin'
-    },
-    {
       name: 'Granola',
       mark: 'Gr',
       pattern: 'Meetings → context',
@@ -45,6 +37,14 @@
       detail:
         'Selected channels and threads. Learn rate limits, replies, and event-assisted updates.',
       file: 'slack'
+    },
+    {
+      name: 'Garmin',
+      mark: 'Ga',
+      pattern: 'Activities & health → your store',
+      detail:
+        'Personal API access to selected activities, daily summaries, sleep, heart rate and HRV.',
+      file: 'garmin'
     }
   ];
 </script>

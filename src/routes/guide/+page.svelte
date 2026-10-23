@@ -1,13 +1,6 @@
 <script>
   const providers = [
     {
-      id: 'garmin',
-      name: 'Garmin',
-      prepare: 'A Garmin Personal API key for your own account',
-      select: 'Datasets → activities, daily summaries, sleep, heart rate and HRV',
-      pattern: 'Short-lived tokens, calendar dates and historical reconciliation'
-    },
-    {
       id: 'granola',
       name: 'Granola',
       prepare: 'API key from an eligible account + stable source account ID',
@@ -41,6 +34,13 @@
       prepare: 'Channel read token; suitable user token for threads; optional signing secret',
       select: 'Channels → messages and threads',
       pattern: 'Timestamp identity, rate limits and event-assisted updates'
+    },
+    {
+      id: 'garmin',
+      name: 'Garmin',
+      prepare: 'A Garmin Personal API key for your own account',
+      select: 'Datasets → activities, daily summaries, sleep, heart rate and HRV',
+      pattern: 'Short-lived tokens, calendar dates and historical reconciliation'
     }
   ];
   const repo = 'https://github.com/ashfulcra/connectors-webapp/blob/main';
