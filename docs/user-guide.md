@@ -10,13 +10,14 @@ Your copy runs at `your-name.my.fulcra.ai`. Sign in at `/login`, then open `/app
 4. Choose **Destination**: files, v1 records, or both. Pick a folder and/or compatible owned v1 type. **+ Create new v1 data type…** creates a type with your name and optional description and selects it. The separate standard-type action creates/reuses `Connector records`.
 5. Choose **Schedule** and the initial history date. Save, inspect the preview, confirm it and enable collection.
 
-| Service | Sources                     | Setup and limits                                           |
-| ------- | --------------------------- | ---------------------------------------------------------- |
-| Granola | Selected folders            | [API keys, notes and transcripts](providers/granola.md)    |
-| Asana   | Selected workspace projects | [Tokens, tasks and events](providers/asana.md)             |
-| GitHub  | Selected repositories       | [PAT/App, issues and comments](providers/github.md)        |
-| Notion  | Selected root pages         | [Connection token and nested blocks](providers/notion.md)  |
-| Slack   | Selected member channels    | [Bot/user tokens, history and threads](providers/slack.md) |
+| Service | Sources                               | Setup and limits                                                      |
+| ------- | ------------------------------------- | --------------------------------------------------------------------- |
+| Garmin  | Selected activity and health datasets | [Personal key, renewal and daily reconciliation](providers/garmin.md) |
+| Granola | Selected folders                      | [API keys, notes and transcripts](providers/granola.md)               |
+| Asana   | Selected workspace projects           | [Tokens, tasks and events](providers/asana.md)                        |
+| GitHub  | Selected repositories                 | [PAT/App, issues and comments](providers/github.md)                   |
+| Notion  | Selected root pages                   | [Connection token and nested blocks](providers/notion.md)             |
+| Slack   | Selected member channels              | [Bot/user tokens, history and threads](providers/slack.md)            |
 
 Use **Back to all connectors**, **Add connection**, or the top **Connections** link to return to the chooser. Leaving details does not save edits, disconnect, or change collection.
 

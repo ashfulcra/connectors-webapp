@@ -1,6 +1,13 @@
 <script>
   const providers = [
     {
+      id: 'garmin',
+      name: 'Garmin',
+      prepare: 'A Garmin Personal API key for your own account',
+      select: 'Datasets → activities, daily summaries, sleep, heart rate and HRV',
+      pattern: 'Short-lived tokens, calendar dates and historical reconciliation'
+    },
+    {
       id: 'granola',
       name: 'Granola',
       prepare: 'API key from an eligible account + stable source account ID',
@@ -36,13 +43,13 @@
       pattern: 'Timestamp identity, rate limits and event-assisted updates'
     }
   ];
-  const repo = 'https://github.com/ashfulcra/connectors-webapp/blob/feat/connector-template';
+  const repo = 'https://github.com/ashfulcra/connectors-webapp/blob/main';
 </script>
 
 <svelte:head
   ><title>User and agent guides — Fulcra Connectors</title><meta
     name="description"
-    content="Use the five implemented connector examples, hand an agent the build instructions, and contribute another connector for review."
+    content="Use the six implemented connector examples, hand an agent the build instructions, and contribute another connector for review."
   /></svelte:head
 >
 <div class="guide-page">
@@ -51,8 +58,8 @@
     <p class="eyebrow">Use it. Extend it. Share it.</p>
     <h1>User guide</h1>
     <p class="lead">
-      Five implemented examples bring selected data into your Fulcra folders, v1 data types, or
-      both. Each one includes an adapter, source discovery, preview support and runnable tests.
+      Six implemented examples bring selected data into your Fulcra folders, v1 data types, or both.
+      Each one includes an adapter, source discovery, preview support and runnable tests.
     </p>
     <div class="guide-actions">
       <a href="/guides/user.md">Full user instructions ↗</a><a href="/guides/agent.md"

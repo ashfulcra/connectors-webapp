@@ -11,6 +11,7 @@ import granola from '../../../docs/providers/granola.md?raw';
 import asana from '../../../docs/providers/asana.md?raw';
 import github from '../../../docs/providers/github.md?raw';
 import notion from '../../../docs/providers/notion.md?raw';
+import garmin from '../../../docs/providers/garmin.md?raw';
 import slack from '../../../docs/providers/slack.md?raw';
 // Deliberate public document allowlist. Never derive a filesystem path from a URL.
 /** @type {Record<string,string>} */
@@ -28,7 +29,8 @@ const guides = {
   'providers/asana.md': asana,
   'providers/github.md': github,
   'providers/notion.md': notion,
-  'providers/slack.md': slack
+  'providers/slack.md': slack,
+  'providers/garmin.md': garmin
 };
 
 // Keep repository-relative links useful in the explicitly published copies.

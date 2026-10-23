@@ -8,13 +8,14 @@ Start with the [reference app](https://connectors.my.fulcra.ai), or fork this re
 
 ## What it connects
 
-| Connector | Imported data                          | Example pattern                                  |
-| --------- | -------------------------------------- | ------------------------------------------------ |
-| Granola   | Selected meeting notes and transcripts | API keys, delayed content, transcript pagination |
-| Asana     | Selected projects' tasks and changes   | Event cursors and periodic reconciliation        |
-| GitHub    | Issues, PR metadata and issue comments | Repository selection, pagination, token/App auth |
-| Notion    | Selected pages and nested blocks       | Resumable document traversal                     |
-| Slack     | Selected messages and threads          | History cursors, rate limits, signed event hints |
+| Connector | Imported data                             | Example pattern                                      |
+| --------- | ----------------------------------------- | ---------------------------------------------------- |
+| Garmin    | Selected activities and daily health JSON | Personal key renewal, local dates and reconciliation |
+| Granola   | Selected meeting notes and transcripts    | API keys, delayed content, transcript pagination     |
+| Asana     | Selected projects' tasks and changes      | Event cursors and periodic reconciliation            |
+| GitHub    | Issues, PR metadata and issue comments    | Repository selection, pagination, token/App auth     |
+| Notion    | Selected pages and nested blocks          | Resumable document traversal                         |
+| Slack     | Selected messages and threads             | History cursors, rate limits, signed event hints     |
 
 These are working example adapters with synthetic tests, not promises to mirror every feature of each service. Read each [provider guide](docs/user-guide.md#connect-a-service) for supported data, permissions and limits. Google connectors are outside the current examples.
 
@@ -59,6 +60,6 @@ npm run check
 npm run build
 ```
 
-`npm run test:examples` runs only the five adapters. Tests use synthetic data; they do not require provider credentials. Browser checks and the optional PostgreSQL test path are documented in [contributing](CONTRIBUTING.md).
+`npm run test:examples` runs only the six adapters. Tests use synthetic data; they do not require provider credentials. Browser checks and the optional PostgreSQL test path are documented in [contributing](CONTRIBUTING.md).
 
 MIT licensed. Based on the [Fulcra Svelte app starter](https://github.com/fulcradynamics/app-template-svelte) and [Fulcra app-building skill](https://github.com/fulcradynamics/agent-skills).

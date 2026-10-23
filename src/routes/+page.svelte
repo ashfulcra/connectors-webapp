@@ -2,6 +2,14 @@
   const repo = 'https://github.com/ashfulcra/connectors-webapp';
   const examples = [
     {
+      name: 'Garmin',
+      mark: 'Ga',
+      pattern: 'Activities & health → your store',
+      detail:
+        'Personal API access to selected activities, daily summaries, sleep, heart rate and HRV.',
+      file: 'garmin'
+    },
+    {
       name: 'Granola',
       mark: 'Gr',
       pattern: 'Meetings → context',
@@ -106,7 +114,7 @@
       <div class="section-heading">
         <div>
           <p class="eyebrow">Learn by example</p>
-          <h2>Five connectors. Five useful patterns.</h2>
+          <h2>Six connectors, with setup and source controls.</h2>
         </div>
         <p>Start with one. Reuse the pieces for the next.</p>
       </div>
@@ -225,7 +233,7 @@ node scripts/deploy.mjs</code
       </div>
       <p class="guide-entry">
         Start with the <a href="/guide">user guide</a> or give your coding agent the
-        <a href="/guides/agent.md">agent instructions (Markdown)</a>. All five adapters are
+        <a href="/guides/agent.md">agent instructions (Markdown)</a>. All six adapters are
         implemented in the template; run their synthetic fixtures with
         <code>npm run test:examples</code>.
       </p>
